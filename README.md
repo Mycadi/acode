@@ -181,6 +181,29 @@ bun build
 ./cli
 ```
 
+## Windows powershell Build
+```bash
+git clone https://github.com/paoloanzn/free-code.git
+cd free-code
+#查看bun版本信息，版本要求bun>= 1.3.11
+bun --version
+#版本太低重装
+powershell -c "irm bun.sh/install.ps1 | iex"
+#编译
+bun run build
+#生成exe
+./cli.exe
+```
+
+## bun 旧版解决办法
+```bash
+#查看bun路径，是否对应安装路径，如果是npm安装的直接卸载即可。
+Get-Command bun
+#卸载npm安装的bun
+npm uninstall -g bun
+```
+
+
 ### Build Variants
 
 | Command | Output | Features | Description |
