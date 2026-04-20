@@ -111,11 +111,11 @@ const features = [...featureSet]
 
 const outfile = compile
   ? dev
-    ? './dist/cli-dev'
-    : './dist/cli'
+    ? './dist/acode-dev'
+    : './dist/acode'
   : dev
-    ? './cli-dev'
-    : './cli'
+    ? './acode-dev'
+    : './acode'
 const buildTime = new Date().toISOString()
 const version = dev ? getDevVersion(pkg.version) : pkg.version
 

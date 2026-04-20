@@ -123,14 +123,14 @@ build_binary() {
   info "Building free-code (all experimental features enabled)..."
   cd "$INSTALL_DIR"
   bun run build:dev:full
-  ok "Binary built: $INSTALL_DIR/cli-dev"
+  ok "Binary built: $INSTALL_DIR/acode-dev"
 }
 
 link_binary() {
   local link_dir="$HOME/.local/bin"
   mkdir -p "$link_dir"
 
-  ln -sf "$INSTALL_DIR/cli-dev" "$link_dir/free-code"
+  ln -sf "$INSTALL_DIR/acode-dev" "$link_dir/free-code"
   ok "Symlinked: $link_dir/free-code"
 
   if ! echo "$PATH" | tr ':' '\n' | grep -qx "$link_dir"; then
@@ -174,6 +174,6 @@ printf "  ${BOLD}Or log in with Claude.ai:${RESET}\n"
 printf "    ${CYAN}free-code /login${RESET}\n"
 echo ""
 printf "  ${DIM}Source: $INSTALL_DIR${RESET}\n"
-printf "  ${DIM}Binary: $INSTALL_DIR/cli-dev${RESET}\n"
+printf "  ${DIM}Binary: $INSTALL_DIR/acode-dev${RESET}\n"
 printf "  ${DIM}Link:   ~/.local/bin/free-code${RESET}\n"
 echo ""

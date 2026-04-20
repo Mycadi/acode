@@ -178,7 +178,7 @@ curl -fsSL https://bun.sh/install | bash
 git clone https://github.com/paoloanzn/free-code.git
 cd free-code
 bun build
-./cli
+./acode
 ```
 
 ## Windows powershell Build
@@ -192,7 +192,7 @@ powershell -c "irm bun.sh/install.ps1 | iex"
 #编译
 bun run build
 #生成exe
-./cli.exe
+./acode.exe
 ```
 
 ## bun 旧版解决办法
@@ -208,10 +208,10 @@ npm uninstall -g bun
 
 | Command | Output | Features | Description |
 |---|---|---|---|
-| `bun run build` | `./cli` | `VOICE_MODE` only | Production-like binary |
-| `bun run build:dev` | `./cli-dev` | `VOICE_MODE` only | Dev version stamp |
-| `bun run build:dev:full` | `./cli-dev` | All 54 experimental flags | Full unlock build |
-| `bun run compile` | `./dist/cli` | `VOICE_MODE` only | Alternative output path |
+| `bun run build` | `./acode` | `VOICE_MODE` only | Production-like binary |
+| `bun run build:dev` | `./acode-dev` | `VOICE_MODE` only | Dev version stamp |
+| `bun run build:dev:full` | `./acode-dev` | All 54 experimental flags | Full unlock build |
+| `bun run compile` | `./dist/acode` | `VOICE_MODE` only | Alternative output path |
 
 ### Custom Feature Flags
 
@@ -231,19 +231,19 @@ bun run ./scripts/build.ts --dev --feature=BRIDGE_MODE
 
 ```bash
 # Interactive REPL (default)
-./cli
+./acode
 
 # One-shot mode
-./cli -p "what files are in this directory?"
+./acode -p "what files are in this directory?"
 
 # Specify a model
-./cli --model claude-opus-4-6
+./acode --model claude-opus-4-6
 
 # Run from source (slower startup)
 bun run dev
 
 # OAuth login
-./cli /login
+./acode /login
 ```
 
 ### Environment Variables Reference
