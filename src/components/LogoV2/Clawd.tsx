@@ -71,6 +71,26 @@ const APPLE_EYES: Record<ClawdPose, string> = {
   'arms-up': ' ▗   ▖ '
 };
 export function Clawd(t0) {
+  const $ = _c(1);
+  let t1;
+  if ($[0] === Symbol.for("react.memo_cache_sentinel")) {
+    t1 = <Box flexDirection="column">
+      <Text color="clawd_body">{"    ████████"}</Text>
+      <Text color="clawd_body">{"  ████████████"}</Text>
+      <Text color="clawd_body">{"████████████████"}</Text>
+      <Text color="clawd_body">{"██    ████    ██"}</Text>
+      <Text color="clawd_body">{"██    ████    ██"}</Text>
+      <Text color="clawd_body">{"████████████████"}</Text>
+      <Text color="clawd_body">{"  ████████████"}</Text>
+      <Text color="clawd_body">{"    ██    ██"}</Text>
+    </Box>;
+    $[0] = t1;
+  } else {
+    t1 = $[0];
+  }
+  return t1;
+}
+function _oldClawd() {
   const $ = _c(26);
   let t1;
   if ($[0] !== t0) {
