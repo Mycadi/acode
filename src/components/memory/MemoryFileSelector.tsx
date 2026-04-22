@@ -2,7 +2,7 @@ import { c as _c } from "react/compiler-runtime";
 import { feature } from 'bun:bundle';
 import chalk from 'chalk';
 import { mkdir } from 'fs/promises';
-import { join } from 'path';
+import { basename, dirname, join } from 'path';
 import * as React from 'react';
 import { use, useEffect, useState } from 'react';
 import { getOriginalCwd } from '../../bootstrap/state.js';
@@ -21,6 +21,7 @@ import { getClaudeConfigHomeDir } from '../../utils/envUtils.js';
 import { getDisplayPath } from '../../utils/file.js';
 import { formatRelativeTimeAgo } from '../../utils/format.js';
 import { projectIsInGitRepo } from '../../utils/memory/versions.js';
+import { getProjectMemoryDirectory } from '../../utils/config.js';
 import { updateSettingsForSource } from '../../utils/settings/settings.js';
 import { Select } from '../CustomSelect/index.js';
 import { ListItem } from '../design-system/ListItem.js';
@@ -49,9 +50,11 @@ export function MemoryFileSelector(t0) {
   } = t0;
   const existingMemoryFiles = use(getMemoryFiles());
   const userMemoryPath = join(getClaudeConfigHomeDir(), "CLAUDE.md");
-  const projectMemoryPath = join(getOriginalCwd(), "CLAUDE.md");
+  const projectMemoryDir = getProjectMemoryDirectory();
+  const existingProjectMemory = existingMemoryFiles.find(f => f.type === "Project" && !f.parent && dirname(f.path) === projectMemoryDir && basename(f.path).toLowerCase() === "agents.md");
+  const projectMemoryPath = existingProjectMemory?.path ?? join(projectMemoryDir, "AGENTS.md");
   const hasUserMemory = existingMemoryFiles.some(f => f.path === userMemoryPath);
-  const hasProjectMemory = existingMemoryFiles.some(f_0 => f_0.path === projectMemoryPath);
+  const hasProjectMemory = existingProjectMemory !== undefined;
   const allMemoryFiles = [...existingMemoryFiles.filter(_temp).map(_temp2), ...(hasUserMemory ? [] : [{
     path: userMemoryPath,
     type: "User" as const,
@@ -90,7 +93,7 @@ export function MemoryFileSelector(t0) {
       description = "Saved in ~/.claude/CLAUDE.md";
     } else {
       if (file.type === "Project" && !file.isNested && file.path === projectMemoryPath) {
-        description = `${isGit ? "Checked in at" : "Saved in"} ./CLAUDE.md`;
+        description = `${isGit ? "Checked in at" : "Saved in"} ${getDisplayPath(projectMemoryPath)}`;
       } else {
         if (file.parent) {
           description = "@-imported";

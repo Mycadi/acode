@@ -21,7 +21,7 @@ import { getClaudeConfigHomeDir, isEnvTruthy } from './envUtils.js'
 import { ConfigParseError, getErrnoCode } from './errors.js'
 import { writeFileSyncAndFlush_DEPRECATED } from './file.js'
 import { getFsImplementation } from './fsOperations.js'
-import { findCanonicalGitRoot } from './git.js'
+import { findCanonicalGitRoot, findGitRoot } from './git.js'
 import { safeParseJSON } from './json.js'
 import { stripBOM } from './jsonRead.js'
 import * as lockfile from './lockfile.js'
@@ -1619,6 +1619,11 @@ export const getProjectPathForConfig = memoize((): string => {
   return normalizePathForConfigKey(resolve(originalCwd))
 })
 
+export function getProjectMemoryDirectory(): string {
+  const originalCwd = getOriginalCwd()
+  return findGitRoot(originalCwd) ?? originalCwd
+}
+
 export function getCurrentProjectConfig(): ProjectConfig {
   if (process.env.NODE_ENV === 'test') {
     return TEST_PROJECT_CONFIG_FOR_TESTING
@@ -1797,15 +1802,13 @@ export function recordFirstStartTime(): void {
 }
 
 export function getMemoryPath(memoryType: MemoryType): string {
-  const cwd = getOriginalCwd()
-
   switch (memoryType) {
     case 'User':
       return join(getClaudeConfigHomeDir(), 'CLAUDE.md')
     case 'Local':
-      return join(cwd, 'CLAUDE.local.md')
+      return join(getOriginalCwd(), 'CLAUDE.local.md')
     case 'Project':
-      return join(cwd, 'CLAUDE.md')
+      return join(getProjectMemoryDirectory(), 'AGENTS.md')
     case 'Managed':
       return join(getManagedFilePath(), 'CLAUDE.md')
     case 'AutoMem':
