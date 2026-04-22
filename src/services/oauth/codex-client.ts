@@ -49,6 +49,7 @@ type TokenSuccessResult = {
 
 type TokenFailedResult = {
   type: 'failed'
+  error?: Error
 }
 
 type TokenResult = TokenSuccessResult | TokenFailedResult
@@ -157,7 +158,7 @@ async function postToTokenUrl(body: URLSearchParams): Promise<TokenResult> {
     }
   } catch (err) {
     logError(err as Error)
-    return { type: 'failed' }
+    return { type: 'failed', error: err as Error }
   }
 }
 
@@ -178,7 +179,8 @@ export async function exchangeCodexCode(
     }),
   )
   if (result.type !== 'success') {
-    throw new Error('Codex token exchange failed. Please try again.')
+    const errorDetail = result.error ? ` (${result.error.message})` : ''
+    throw new Error(`Codex token exchange failed. Please try again.${errorDetail}`)
   }
   const accountId = extractCodexAccountId(result.access)
   if (!accountId) {
