@@ -1,10 +1,10 @@
 // biome-ignore-all assist/source/organizeImports: ANT-ONLY import markers must not be reordered
 import { Box, Text } from '../ink.js';
 import * as React from 'react';
-import { getLargeMemoryFiles, MAX_MEMORY_CHARACTER_COUNT, type MemoryFileInfo } from './claudemd.js';
+import { getLargeMemoryFiles, MAX_MEMORY_CHARACTER_COUNT, PROJECT_MEMORY_BASENAME, type MemoryFileInfo } from './claudemd.js';
 import figures from 'figures';
 import { getCwd } from './cwd.js';
-import { relative } from 'path';
+import { relative, basename } from 'path';
 import { formatNumber } from './format.js';
 import type { getGlobalConfig } from './config.js';
 import { getAnthropicApiKeyWithSource, getApiKeyFromConfigOrMacOSKeychain, getAuthTokenSource, isClaudeAISubscriber } from './auth.js';
@@ -188,8 +188,32 @@ const jetbrainsPluginNotice: StatusNoticeDefinition = {
   }
 };
 
+const agentsMdDetectedNotice: StatusNoticeDefinition = {
+  id: 'agents-md-detected',
+  type: 'info',
+  isActive: ctx => {
+    return ctx.memoryFiles.some(file =>
+      basename(file.path).toLowerCase() === PROJECT_MEMORY_BASENAME.toLowerCase() && file.type === 'Project'
+    );
+  },
+  render: ctx => {
+    const agentsMdFiles = ctx.memoryFiles.filter(file =>
+      basename(file.path).toLowerCase() === PROJECT_MEMORY_BASENAME.toLowerCase() && file.type === 'Project'
+    );
+    const count = agentsMdFiles.length;
+    const names = agentsMdFiles.map(f => basename(f.path)).join(', ');
+    return <Box flexDirection="row" gap={1}>
+        <Text color="suggestion">{figures.info}</Text>
+        <Text>
+          {`\u53C2\u8003\u4E86 ${count} \u4E2A\u4E0A\u4E0B\u6587`} <Text bold>{names}</Text>
+          <Text dimColor> · /memory \u67E5\u770B\u7F16\u8F91</Text>
+        </Text>
+      </Box>;
+  }
+};
+
 // All notice definitions
-export const statusNoticeDefinitions: StatusNoticeDefinition[] = [largeMemoryFilesNotice, largeAgentDescriptionsNotice, claudeAiSubscriberExternalTokenNotice, apiKeyConflictNotice, bothAuthMethodsNotice, jetbrainsPluginNotice];
+export const statusNoticeDefinitions: StatusNoticeDefinition[] = [agentsMdDetectedNotice, largeMemoryFilesNotice, largeAgentDescriptionsNotice, claudeAiSubscriberExternalTokenNotice, apiKeyConflictNotice, bothAuthMethodsNotice, jetbrainsPluginNotice];
 
 // Helper functions for external use
 export function getActiveNotices(context: StatusNoticeContext): StatusNoticeDefinition[] {
