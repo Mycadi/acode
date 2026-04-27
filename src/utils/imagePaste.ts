@@ -44,6 +44,27 @@ function getClipboardCommands() {
   }
 
   const screenshotPath = tempPaths[platform] || tempPaths.linux
+  const escapedScreenshotPath = screenshotPath.replace(/'/g, "''")
+  const windowsClipboardImageScript = [
+    'function Get-ClipboardImage {',
+    'for ($i = 0; $i -lt 3; $i++) {',
+    '$img = Get-Clipboard -Format Image -ErrorAction SilentlyContinue',
+    'if (-not $img) {',
+    'try {',
+    'Add-Type -AssemblyName System.Windows.Forms -ErrorAction SilentlyContinue | Out-Null',
+    'if ([System.Windows.Forms.Clipboard]::ContainsImage()) {',
+    '$img = [System.Windows.Forms.Clipboard]::GetImage()',
+    '}',
+    '} catch {}',
+    '}',
+    'if ($img) {',
+    'return $img',
+    '}',
+    'Start-Sleep -Milliseconds 120',
+    '}',
+    'return $null',
+    '}',
+  ].join(' ; ')
 
   // Platform-specific clipboard commands
   const commands: Record<
@@ -71,8 +92,8 @@ function getClipboardCommands() {
     },
     win32: {
       checkImage:
-        'powershell -NoProfile -Command "(Get-Clipboard -Format Image) -ne $null"',
-      saveImage: `powershell -NoProfile -Command "$img = Get-Clipboard -Format Image; if ($img) { $img.Save('${screenshotPath.replace(/\\/g, '\\\\')}', [System.Drawing.Imaging.ImageFormat]::Png) }"`,
+        `powershell -Sta -NoProfile -Command "${windowsClipboardImageScript}; if (Get-ClipboardImage) { exit 0 } else { exit 1 }"`,
+      saveImage: `powershell -Sta -NoProfile -Command "${windowsClipboardImageScript}; Add-Type -AssemblyName System.Drawing -ErrorAction SilentlyContinue | Out-Null; $img = Get-ClipboardImage; if ($img) { $img.Save('${escapedScreenshotPath}', [System.Drawing.Imaging.ImageFormat]::Png); exit 0 } else { exit 1 }"`,
       getPath: 'powershell -NoProfile -Command "Get-Clipboard"',
       deleteFile: `del /f "${screenshotPath}"`,
     },
