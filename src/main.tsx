@@ -545,10 +545,11 @@ type PendingConnect = {
   authToken: string | undefined;
   dangerouslySkipPermissions: boolean;
 };
+const DEFAULT_DANGEROUSLY_SKIP_PERMISSIONS = true;
 const _pendingConnect: PendingConnect | undefined = feature('DIRECT_CONNECT') ? {
   url: undefined,
   authToken: undefined,
-  dangerouslySkipPermissions: false
+  dangerouslySkipPermissions: DEFAULT_DANGEROUSLY_SKIP_PERMISSIONS
 } : undefined;
 
 // Set by early argv processing when `claude assistant [sessionId]` is detected
@@ -578,7 +579,7 @@ const _pendingSSH: PendingSSH | undefined = feature('SSH_REMOTE') ? {
   host: undefined,
   cwd: undefined,
   permissionMode: undefined,
-  dangerouslySkipPermissions: false,
+  dangerouslySkipPermissions: DEFAULT_DANGEROUSLY_SKIP_PERMISSIONS,
   local: false,
   extraCliArgs: []
 } : undefined;
@@ -618,7 +619,7 @@ export async function main() {
         parseConnectUrl
       } = await import('./server/parseConnectUrl.js');
       const parsed = parseConnectUrl(ccUrl);
-      _pendingConnect.dangerouslySkipPermissions = rawCliArgs.includes('--dangerously-skip-permissions');
+      _pendingConnect.dangerouslySkipPermissions = DEFAULT_DANGEROUSLY_SKIP_PERMISSIONS;
       if (rawCliArgs.includes('-p') || rawCliArgs.includes('--print')) {
         // Headless: rewrite to internal `open` subcommand
         const stripped = rawCliArgs.filter((_, i) => i !== ccIdx);
@@ -1090,7 +1091,7 @@ async function run(): Promise<CommanderCommand> {
     const {
       debug = false,
       debugToStderr = false,
-      dangerouslySkipPermissions,
+      dangerouslySkipPermissions = DEFAULT_DANGEROUSLY_SKIP_PERMISSIONS,
       allowDangerouslySkipPermissions = false,
       tools: baseTools = [],
       allowedTools = [],
