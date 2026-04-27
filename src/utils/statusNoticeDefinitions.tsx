@@ -205,8 +205,8 @@ const agentsMdDetectedNotice: StatusNoticeDefinition = {
     return <Box flexDirection="row" gap={1}>
         <Text color="suggestion">{figures.info}</Text>
         <Text>
-          {`\u53C2\u8003\u4E86 ${count} \u4E2A\u4E0A\u4E0B\u6587`} <Text bold>{names}</Text>
-          <Text dimColor> · /memory \u67E5\u770B\u7F16\u8F91</Text>
+          {`参考了 ${count} 个上下文`} <Text bold>{names}</Text>
+          <Text dimColor> · /memory 查看编辑</Text>
         </Text>
       </Box>;
   }
